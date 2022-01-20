@@ -1,6 +1,4 @@
-
-
-adjac_lis = {
+adjacent_nodes = {
     'A': [('B', 1), ('C', 3), ('D', 7)],
     'B': [('D', 5)],
     'C': [('D', 12)]
@@ -13,72 +11,92 @@ heuristic = {
     'D': 1
 }
 
+start = 'A'
+stop = 'D'
 
-def a_star(start, stop):
-    # nodes that have been visited but adjacent nodes haven't been visited yet
-    visited_list = set([start])
-    done_list = set([])
+# nodes that have been visited but adjacent nodes haven't been visited yet
+visit_list = set([start])
+done_list = set([])
 
-    # present distances from start to all other nodes
-    distance = {}
-    distance[start] = 0
+# present distances from start to all other nodes
+distance = {}
+distance[start] = 0
 
-    parent = {}
-    parent[start] = start
+parent = {}
+parent[start] = start
 
+
+def generateOutput(node):
+    result = []
+
+    while parent[node] != node:
+        result.append(node)
+        node = parent[node]
+
+    result.append(start)
+
+    result.reverse()
+
+    print('Path found: {}'.format(result))
+    return result
+
+
+def selectLowestF(node):
     # select node with lowest f
-    while len(visited_list) > 0:
-        n = None
-        for v in visited_list:
-            if n == None or distance[v] + heuristic[v] < distance[n] + heuristic[n]:
-                n = v
+    for v in visit_list:
+        if node == None or distance[v] + heuristic[v] < distance[node] + heuristic[node]:
+            node = v
+    return node
 
-        if n == None:
+
+def addToVisitList(m, weight, node):
+    visit_list.add(m)
+    parent[m] = node
+    distance[m] = distance[node] + weight
+
+
+def changeNodePath(m, weight, node):
+    if distance[m] > distance[node] + weight:
+        distance[m] = distance[node] + weight
+        parent[m] = node
+
+        if m in done_list:
+            done_list.remove(m)
+            visit_list.add(m)
+
+
+def a_star_algorithm():
+    while len(visit_list) > 0:
+        node = None
+        node = selectLowestF(node)
+
+        if node == None:
             print(f"There is no path from {start} to {stop}")
             return None
 
-        if n == stop:
-            reconst_path = []
+        if node == stop:
+            return generateOutput(node)
 
-            while parent[n] != n:
-                reconst_path.append(n)
-                n = parent[n]
+        # for all the adjacent nodes of the current node do
+        for (m, weight) in adjacent_nodes[node]:
+            # add to visit list to be visited in the next iterate
+            if m not in visit_list and m not in done_list:
+                addToVisitList(m, weight, node)
 
-            reconst_path.append(start)
-
-            reconst_path.reverse()
-
-            print('Path found: {}'.format(reconst_path))
-            return reconst_path
-
-        # for all the neighbors of the current node do
-        for (m, weight) in adjac_lis[n]:
-            # if the current node is not presentin both open_lst and closed_lst
-            # add it to open_lst and note n as it's par
-            if m not in visited_list and m not in done_list:
-                visited_list.add(m)
-                parent[m] = n
-                distance[m] = distance[n] + weight
-
-            # otherwise, check if it's quicker to first visit n, then m
+            # otherwise, check if it's quicker to first visit node, then m
             # and if it is, update par data and poo data
             # and if the node was in the closed_lst, move it to open_lst
+
             else:
-                if distance[m] > distance[n] + weight:
-                    distance[m] = distance[n] + weight
-                    parent[m] = n
+                changeNodePath(m, weight, node)
 
-                    if m in done_list:
-                        done_list.remove(m)
-                        visited_list.add(m)
-
-        # remove n from the open_lst, and add it to closed_lst
+        # remove node from the open_lst, and add it to closed_lst
         # because all of his neighbors were inspected
-        visited_list.remove(n)
-        done_list.add(n)
+        visit_list.remove(node)
+        done_list.add(node)
 
     print('Path does not exist!')
     return None
 
 
-a_star('A', 'D')
+a_star_algorithm()
