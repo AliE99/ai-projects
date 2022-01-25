@@ -5,7 +5,7 @@ from random import randint
 import matplotlib.pyplot as plt
 
 
-# Initializing the list of items, we have 10 items
+# 1 Initializing the list of items, we have 10 items
 item_number = np.arange(1, 11)
 weight = np.random.randint(1, 15, size=10)
 cost = np.random.randint(10, 750, size=10)
@@ -16,7 +16,7 @@ for i in range(item_number.shape[0]):
     print(f"{item_number[i]}          {weight[i]}         {cost[i]}\n")
 
 
-# Initial Population
+# 2 Initial Population
 # Each gene has a cost 1 or 0 which tells whether the corresponding item is present or not
 solutionsPopulation = 8
 populationSize = (solutionsPopulation, item_number.shape[0])
@@ -27,7 +27,7 @@ numberOfGenerations = 50
 print(f"Initial population: \n{initial_population}")
 
 
-# The fitness function, limit = knapsack weight
+# 3 The fitness function, limit = knapsack weight
 def fitnessFunction(weight, cost, population, limit):
     fitness = np.empty(population.shape[0])
     for i in range(population.shape[0]):
@@ -41,7 +41,7 @@ def fitnessFunction(weight, cost, population, limit):
     return fitness.astype(int)
 
 
-# Now we select the fittest individuals so that they can undergo crossover
+# 4 Now we select the fittest individuals so that they can undergo crossover
 def selection(fitness, num_parents, population):
     fitness = list(fitness)
     parents = np.empty((num_parents, population.shape[1]))
@@ -52,7 +52,7 @@ def selection(fitness, num_parents, population):
     return parents
 
 
-# For crossover we will be using one-point crossover: two individuals create two offsprings.
+# 5 For crossover we will be using one-point crossover: two individuals create two offsprings.
 def crossover(parents, num_offsprings):
     offsprings = np.empty((num_offsprings, parents.shape[1]))
     crossover_point = int(parents.shape[1]/2)
@@ -74,7 +74,7 @@ def crossover(parents, num_offsprings):
     return offsprings
 
 
-# In Mutation, which chromosome will undergo mutation is being done randomly.
+# 6 In Mutation, which chromosome will undergo mutation is being done randomly.
 # if the selected gene which is going to undergo mutation is 1 then change it to 0 and vice-versa.
 def mutation(offsprings):
     mutants = np.empty((offsprings.shape))
@@ -94,7 +94,7 @@ def mutation(offsprings):
 
 # now we will call them in the order of the flow chart to find the required parameters
 # and make all the necessary initializations.
-def optimization(weight, cost, population, populationSize, numberOfGenerations, limit):
+def main(weight, cost, population, populationSize, numberOfGenerations, limit):
     parameters = []
     num_parents = int(populationSize[0]/2)
     num_offsprings = populationSize[0] - num_parents
@@ -114,7 +114,7 @@ def optimization(weight, cost, population, populationSize, numberOfGenerations, 
     return parameters
 
 
-parameters = optimization(
+parameters = main(
     weight, cost, initial_population, populationSize, numberOfGenerations, knapsack_limit)
 
 print(f"The optimized parameters: \n{parameters}")

@@ -1,18 +1,27 @@
-adjacent_nodes = {
-    'A': [('B', 1), ('C', 3), ('D', 7)],
-    'B': [('D', 5)],
-    'C': [('D', 12)]
+from ast import For
+
+
+graph = {
+    'A': [('B', 4), ('C', 3)],
+    'B': [('F', 5), ('E', 12)],
+    'C': [('D', 7), ('E', 10)],
+    'D': [('E', 2)],
+    'F': [('Z', 16)],
+    'E': [('Z', 5)]
 }
 
 heuristic = {
-    'A': 1,
-    'B': 1,
-    'C': 1,
-    'D': 1
+    'A': 14,
+    'B': 12,
+    'C': 11,
+    'D': 6,
+    'F': 11,
+    'E': 4,
+    'Z': 1,
 }
 
 start = 'A'
-stop = 'D'
+stop = 'Z'
 
 # nodes that have been visited but adjacent nodes haven't been visited yet
 visit_list = set([start])
@@ -37,7 +46,6 @@ def generateOutput(node):
 
     result.reverse()
 
-    print('Path found: {}'.format(result))
     return result
 
 
@@ -78,7 +86,7 @@ def a_star_algorithm():
             return generateOutput(node)
 
         # for all the adjacent nodes of the current node do
-        for (m, weight) in adjacent_nodes[node]:
+        for (m, weight) in graph[node]:
             # add to visit list to be visited in the next iterate
             if m not in visit_list and m not in done_list:
                 addToVisitList(m, weight, node)
@@ -99,4 +107,10 @@ def a_star_algorithm():
     return None
 
 
-a_star_algorithm()
+result = a_star_algorithm()
+print('\n--------------------')
+
+for node in result:
+    print(node, end='  ')
+
+print('\n--------------------\n')
