@@ -23,11 +23,10 @@ heuristic = {
 start = 'A'
 stop = 'Z'
 
-# nodes that have been visited but adjacent nodes haven't been visited yet
+# Sets to keep track of visited nodes and adjacent unvisited ones
 visit_list = set([start])
 done_list = set([])
 
-# present distances from start to all other nodes
 distance = {}
 distance[start] = 0
 
@@ -50,7 +49,7 @@ def generateOutput(node):
 
 
 def selectLowestF(node):
-    # select node with lowest f
+    # select node with lowest f(n)
     for v in visit_list:
         if node == None or distance[v] + heuristic[v] < distance[node] + heuristic[node]:
             node = v
@@ -85,21 +84,17 @@ def a_star_algorithm():
         if node == stop:
             return generateOutput(node)
 
-        # for all the adjacent nodes of the current node do
+        # execute on all adjacent nodes
         for (m, weight) in graph[node]:
-            # add to visit list to be visited in the next iterate
+            # put in the set of adjacent targets for next iteration
             if m not in visit_list and m not in done_list:
                 addToVisitList(m, weight, node)
 
-            # otherwise, check if it's quicker to first visit node, then m
-            # and if it is, update par data and poo data
-            # and if the node was in the closed_lst, move it to open_lst
-
+            # check if its better to visit and update
             else:
                 changeNodePath(m, weight, node)
 
-        # remove node from the open_lst, and add it to closed_lst
-        # because all of his neighbors were inspected
+        # move node to visited ones because neighbours were visited
         visit_list.remove(node)
         done_list.add(node)
 
